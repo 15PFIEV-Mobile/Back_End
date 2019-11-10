@@ -8,12 +8,13 @@ class UserModel(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.Text, unique=True, nullable=False)
     password = db.Column(db.Text, nullable=False)
-    email = db.Column(db.Text, nullable=False)
+    email = db.Column(db.Text, unique=True, nullable=False)
     created_at = db.Column(db.DateTime)
 
-    def __init__(self, username, password):
+    def __init__(self, username, password, email):
         self.username=username
         self.password=password
+        self.email=email
         self.created_at = datetime.now()
 
     def save_to_db(self):
@@ -38,6 +39,7 @@ class UserModel(db.Model):
             return {
                 'username': x.username,
                 'password': x.password,
+                'email': x.email,
                 'created_at': x.created_at.strftime('%d/%m/%Y %H:%M:%S')
             }
         return list(map(lambda x: to_json(x), UserModel.query.all()))

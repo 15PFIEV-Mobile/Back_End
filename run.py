@@ -20,4 +20,18 @@ jwt = JWTManager(app)
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 
-import models, resources                
+@jwt.token_in_blacklist_loader
+def check_if_token_in_blacklist(decrypted_token):
+    jti = decrypted_token['jti']
+    return models.RevokedTokens.RevokedTokenModel.is_jti_blacklisted(jti)
+
+
+import models, resources
+
+api.add_resource(resources.UserRegistration, '/registration/user')
+api.add_resource(resources.UserLogin, '/login')
+api.add_resource(resources.UserLogoutAccess, '/logout/access')
+api.add_resource(resources.UserLogoutRefresh, '/logout/refresh')
+api.add_resource(resources.TokenRefresh, '/token/refresh')
+api.add_resource(resources.AllUsers, '/users')
+                 
